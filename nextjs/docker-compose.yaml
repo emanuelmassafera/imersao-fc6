@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    entrypoint: .docker/entrypoint.sh
+    volumes:
+      - .:/home/node/app
+    ports:
+      - 3001:3000
+    networks:
+        - full_cycle
+
+networks:
+  full_cycle:
+    name: full_cycle
