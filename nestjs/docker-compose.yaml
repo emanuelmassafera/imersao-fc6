@@ -12,6 +12,8 @@ services:
       - db
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+        - full_cycle
 
   db:
     image: mongo:5.0.5
@@ -26,6 +28,8 @@ services:
       - MONGO_INITDB_DATABASE=analytics
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+        - full_cycle
 
   mongo-express:
     image: mongo-express:0.54.0
@@ -40,6 +44,14 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=root
     depends_on:
       - db
+    networks:
+        - full_cycle
 
   redis:
     image: redis:6.2.6-alpine3.14
+    networks:
+        - full_cycle
+
+networks:
+  full_cycle:
+    name: full_cycle
