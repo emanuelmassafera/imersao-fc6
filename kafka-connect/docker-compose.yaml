@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -29,6 +28,7 @@ services:
     hostname: control-center
     depends_on:
       - kafka
+      - kafka-connect
     ports:
       - "9021:9021"
     environment:
@@ -36,8 +36,6 @@ services:
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_CONNECT_CLUSTER: http://kafka-connect:8083
       PORT: 9021
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
 
   kafka-connect:
     image: confluentinc/cp-kafka-connect-base:6.0.0
@@ -65,30 +63,14 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
-      # # Optional settings to include to support Confluent Control Center
-
-
-
-      #   CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
-
-
-
-      #   CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-
-
-
-      #  ---------------
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/data/connect-jars
-    # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
     command:
       - bash
       - -c
       - |
         echo "Installing Connector"
-        confluent-hub install --no-prompt debezium/debezium-connector-mysql:1.2.2
-        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:10.0.1
-        confluent-hub install --no-prompt jcustenborder/kafka-connect-twitter:0.3.33
         confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:1.5.0
+        confluent-hub install --no-prompt jcustenborder/kafka-connect-twitter:0.3.33
         #
         echo "Launching Kafka Connect worker"
         /etc/confluent/docker/run &
@@ -96,32 +78,3 @@ services:
         sleep infinity
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
-
-  mongodb:
-    image: mongo:4.4.4
-    restart: always
-    volumes:
-      - ./.docker/dbdata:/data/db
-      - ./.docker/mongo:/docker-entrypoint-initdb.d
-    ports:
-      - 27017:27017
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=root
-      - MONGO_INITDB_DATABASE=nest
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
-
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - 8085:8081
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-      - ME_CONFIG_MONGODB_AUTH_USERNAME=root
-      - ME_CONFIG_MONGODB_AUTH_PASSWORD=root
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=root
-    depends_on:
-      - mongodb

@@ -10,6 +10,8 @@ services:
       - 3000:3000
     depends_on:
       - db
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
 
   db:
     image: mongo:5.0.5
@@ -22,7 +24,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
       - MONGO_INITDB_DATABASE=analytics
-  
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
   mongo-express:
     image: mongo-express:0.54.0
     restart: always
@@ -36,6 +40,6 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=root
     depends_on:
       - db
-  
+
   redis:
     image: redis:6.2.6-alpine3.14

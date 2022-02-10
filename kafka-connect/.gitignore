@@ -1,2 +1,1 @@
-.docker
-connectors/connector-twitter-config.properties
+connectors/source-twitter.properties
