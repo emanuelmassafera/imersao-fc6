@@ -2,12 +2,23 @@ version: '3'
 services:
   app:
     build: .
+    environment:
+      - MAIL_HOST=smtp.mailtrap.io
+      - MAIL_PORT=2525
+      - MAIL_USER=a98aaa0c1104ab
+      - MAIL_PASSWORD=eefcec79573a0d
+      - MAIL_FROM=full@cycle.com
+      - BOOTSTRAP_SERVERS=pkc-6ojv2.us-west4.gcp.confluent.cloud:9092
+      - SECURITY_PROTOCOL=SASL_SSL
+      - SASL_MECHANISMS=PLAIN
+      - SASL_USERNAME=PA5V2URUUMG2EAZX
+      - SASL_PASSWORD=i6diwJoqVqqX9GtQzQKEG7n1n6EM2J04DwYWaSEOpGphx8a6wG85BAOg9EUMRZbc
     volumes:
       - .:/go/src/
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
     networks:
-        - full_cycle
+      - full_cycle
 
 networks:
   full_cycle:
