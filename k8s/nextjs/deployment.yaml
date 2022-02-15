@@ -13,9 +13,9 @@ spec:
     spec:
       containers:
       - name: nextjs
-        image: emanuelmassafera/imersao-fc6-nextjs
+        image: argentinaluiz/imersao6-next.js
         envFrom:
           - secretRef:
               name: nextjs-secret
         ports:
-        - containerPort: 3001
+        - containerPort: 3000
